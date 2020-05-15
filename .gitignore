@@ -1,0 +1,7 @@
+.terraform
+*.tfstate*
+.idea
+.project
+.settings
+dist
+testdata/kubectl-sops*
