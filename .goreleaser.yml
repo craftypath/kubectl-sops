@@ -1,0 +1,30 @@
+before:
+  hooks:
+    - go mod download
+builds:
+  - main: main.go
+    binary: kubectl-sops
+    env:
+      - CGO_ENABLED=0
+    goarch:
+      - amd64
+    goos:
+      - linux
+      - darwin
+      - windows
+    ldflags:
+      - >-
+        -X main.Version={{ .Tag }}
+        -X main.GitCommit={{ .Commit }}
+        -X main.BuildDate={{ .Date }}
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+archives:
+  - format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE
+      - README.md
