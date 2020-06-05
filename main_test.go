@@ -16,17 +16,26 @@ package main
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_parseArgs(t *testing.T) {
 	tests := []struct {
 		name string
 		args []string
+		want *config
 	}{
 		{
 			name: "-oyaml",
 			args: []string{
 				"create", "secret", "-oyaml",
+			},
+			want: &config{
+				output:      "yaml",
+				dryRun:      false,
+				dryRunType:  "",
+				kubectlArgs: []string{"create", "secret"},
 			},
 		},
 		{
@@ -34,11 +43,23 @@ func Test_parseArgs(t *testing.T) {
 			args: []string{
 				"create", "secret", "-ojson",
 			},
+			want: &config{
+				output:      "json",
+				dryRun:      false,
+				dryRunType:  "",
+				kubectlArgs: []string{"create", "secret"},
+			},
 		},
 		{
 			name: "-o yaml",
 			args: []string{
 				"create", "secret", "-o", "yaml",
+			},
+			want: &config{
+				output:      "yaml",
+				dryRun:      false,
+				dryRunType:  "",
+				kubectlArgs: []string{"create", "secret"},
 			},
 		},
 		{
@@ -46,11 +67,23 @@ func Test_parseArgs(t *testing.T) {
 			args: []string{
 				"create", "secret", "-o", "json",
 			},
+			want: &config{
+				output:      "json",
+				dryRun:      false,
+				dryRunType:  "",
+				kubectlArgs: []string{"create", "secret"},
+			},
 		},
 		{
 			name: "--output=yaml",
 			args: []string{
 				"create", "secret", "--output=yaml",
+			},
+			want: &config{
+				output:      "yaml",
+				dryRun:      false,
+				dryRunType:  "",
+				kubectlArgs: []string{"create", "secret"},
 			},
 		},
 		{
@@ -58,11 +91,23 @@ func Test_parseArgs(t *testing.T) {
 			args: []string{
 				"create", "secret", "--output=json",
 			},
+			want: &config{
+				output:      "json",
+				dryRun:      false,
+				dryRunType:  "",
+				kubectlArgs: []string{"create", "secret"},
+			},
 		},
 		{
 			name: "--output yaml",
 			args: []string{
 				"create", "secret", "--output", "yaml",
+			},
+			want: &config{
+				output:      "yaml",
+				dryRun:      false,
+				dryRunType:  "",
+				kubectlArgs: []string{"create", "secret"},
 			},
 		},
 		{
@@ -70,11 +115,23 @@ func Test_parseArgs(t *testing.T) {
 			args: []string{
 				"create", "secret", "--output", "json",
 			},
+			want: &config{
+				output:      "json",
+				dryRun:      false,
+				dryRunType:  "",
+				kubectlArgs: []string{"create", "secret"},
+			},
 		},
 		{
 			name: "--dry-run",
 			args: []string{
 				"create", "secret", "--dry-run",
+			},
+			want: &config{
+				output:      "",
+				dryRun:      true,
+				dryRunType:  "",
+				kubectlArgs: []string{"create", "secret"},
 			},
 		},
 		{
@@ -82,11 +139,35 @@ func Test_parseArgs(t *testing.T) {
 			args: []string{
 				"create", "secret", "--dry-run=client",
 			},
+			want: &config{
+				output:      "",
+				dryRun:      true,
+				dryRunType:  "client",
+				kubectlArgs: []string{"create", "secret"},
+			},
 		},
 		{
 			name: "--dry-run client",
 			args: []string{
 				"create", "secret", "--dry-run", "client",
+			},
+			want: &config{
+				output:      "",
+				dryRun:      true,
+				dryRunType:  "client",
+				kubectlArgs: []string{"create", "secret"},
+			},
+		},
+		{
+			name: "--dry-run server",
+			args: []string{
+				"create", "secret", "--dry-run", "server",
+			},
+			want: &config{
+				output:      "",
+				dryRun:      true,
+				dryRunType:  "client", // server is not supported -> use client
+				kubectlArgs: []string{"create", "secret"},
 			},
 		},
 		{
@@ -94,12 +175,18 @@ func Test_parseArgs(t *testing.T) {
 			args: []string{
 				"create", "secret", "--dry-run", "-o", "yaml",
 			},
+			want: &config{
+				output:      "yaml",
+				dryRun:      true,
+				dryRunType:  "",
+				kubectlArgs: []string{"create", "secret"},
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// TODO write assertions
-			parseArgs(tt.args)
+			got := parseArgs(tt.args)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
