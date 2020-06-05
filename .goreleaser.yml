@@ -15,7 +15,7 @@ builds:
     ldflags:
       - >-
         -X main.Version={{ .Tag }}
-        -X main.GitCommit={{ .Commit }}
+        -X main.GitCommit={{ .ShortCommit }}
         -X main.BuildDate={{ .Date }}
 checksum:
   name_template: 'checksums.txt'
