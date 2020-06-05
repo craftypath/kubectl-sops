@@ -7,6 +7,7 @@ require (
 	github.com/golangci/golangci-lint v1.25.0
 	github.com/goreleaser/goreleaser v0.132.1
 	github.com/magefile/mage v1.9.0
+	github.com/stretchr/testify v1.5.1
 	golang.org/x/tools v0.0.0-20200422022333-3d57cf2e726e
 	k8s.io/api v0.17.4
 	k8s.io/apimachinery v0.17.4
