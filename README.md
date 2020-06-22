@@ -1,6 +1,7 @@
 # kubectl-sops
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+![](https://github.com/craftypath/kubectl-sops/workflows/CI/badge.svg?branch=master)
 
 A `kubectl` plugin for creating `SopsSecret` resources.
 
