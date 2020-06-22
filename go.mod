@@ -3,7 +3,7 @@ module github.com/craftypath/kubectl-sops
 go 1.14
 
 require (
-	github.com/craftypath/sops-operator v0.3.0
+	github.com/craftypath/sops-operator v0.4.0
 	github.com/golangci/golangci-lint v1.25.0
 	github.com/goreleaser/goreleaser v0.132.1
 	github.com/magefile/mage v1.9.0
