@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
-	"strings"
 
 	"github.com/craftypath/sops-operator/pkg/apis/craftypath/v1alpha1"
 
@@ -41,15 +41,21 @@ var (
 	Version   = "dev"
 	GitCommit = "HEAD"
 	BuildDate = "unknown"
-)
 
-var (
 	outputRegexes = []*regexp.Regexp{
 		regexp.MustCompile(`^-o(json|yaml)?$`),
 		regexp.MustCompile(`^--output(?:=(json|yaml))?$`),
 	}
 	dryRunRegex            = regexp.MustCompile(`^--dry-run(?:=(none|server|client))?$`)
 	allowedDryRunTypeRegex = regexp.MustCompile(`none|client|server`)
+
+	sopsFileFormats = map[string]string{
+		".yaml": "yaml",
+		".yml":  "yaml",
+		".json": "json",
+		".ini":  "ini",
+		".env":  "dotenv",
+	}
 )
 
 func main() {
@@ -146,7 +152,7 @@ func createSopsSecret(config *config, secret *corev1.Secret) (*v1alpha1.SopsSecr
 	}
 
 	for k, v := range secret.Data {
-		format := formatForFileName(k)
+		format := determineFileFormat(k)
 		args := []string{"--input-type", format, "--output-type", format}
 		args = append(args, config.sopsArgs...)
 		args = append(args, "-e", "/dev/stdin")
@@ -225,32 +231,10 @@ func parseArgs(args []string) *config {
 	return config
 }
 
-func isYAMLFile(path string) bool {
-	return strings.HasSuffix(path, ".yaml") || strings.HasSuffix(path, ".yml")
-}
-
-func isJSONFile(path string) bool {
-	return strings.HasSuffix(path, ".json")
-}
-
-func isEnvFile(path string) bool {
-	return strings.HasSuffix(path, ".env")
-}
-
-func isIniFile(path string) bool {
-	return strings.HasSuffix(path, ".ini")
-}
-
-func formatForFileName(fileName string) string {
-	s := strings.ToLower(fileName)
-	if isYAMLFile(s) {
-		return "yaml"
-	} else if isJSONFile(s) {
-		return "json"
-	} else if isEnvFile(s) {
-		return "dotenv"
-	} else if isIniFile(s) {
-		return "ini"
+func determineFileFormat(fileName string) string {
+	ext := filepath.Ext(fileName)
+	if format, exists := sopsFileFormats[ext]; exists {
+		return format
 	}
 	return "binary"
 }
