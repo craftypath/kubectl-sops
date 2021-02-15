@@ -111,7 +111,7 @@ func applySopsSecret(config *config, sopsSecret *v1alpha1.SopsSecret) error {
 	}
 
 	args := []string{
-		"apply",
+		"create", "--save-config=false",
 	}
 	if config.dryRun {
 		if config.dryRunType != "" {
@@ -208,7 +208,6 @@ func parseArgs(args []string) *config {
 			config.dryRun = true
 			if submatch[1] != "" {
 				config.dryRunType = submatch[1]
-				continue
 			} else {
 				if len(args) > i+1 {
 					nextArg := args[i+1]
@@ -217,8 +216,8 @@ func parseArgs(args []string) *config {
 						i++
 					}
 				}
-				continue
 			}
+			continue
 		}
 
 		config.kubectlArgs = append(config.kubectlArgs, arg)

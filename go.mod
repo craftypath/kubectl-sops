@@ -1,6 +1,6 @@
 module github.com/craftypath/kubectl-sops
 
-go 1.14
+go 1.15
 
 require (
 	github.com/craftypath/sops-operator v0.7.0
